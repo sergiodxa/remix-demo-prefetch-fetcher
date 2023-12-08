@@ -1,41 +1,20 @@
-import type { MetaFunction } from "@remix-run/node";
-
-export const meta: MetaFunction = () => {
-  return [
-    { title: "New Remix App" },
-    { name: "description", content: "Welcome to Remix!" },
-  ];
-};
+import { PrefetchPageLinks, useFetcher } from "@remix-run/react";
+import type { loader as resourceLoader } from "./resource";
 
 export default function Index() {
+  let fetcher = useFetcher<typeof resourceLoader>();
+
   return (
-    <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
-      <h1>Welcome to Remix</h1>
-      <ul>
-        <li>
-          <a
-            target="_blank"
-            href="https://remix.run/tutorials/blog"
-            rel="noreferrer"
-          >
-            15m Quickstart Blog Tutorial
-          </a>
-        </li>
-        <li>
-          <a
-            target="_blank"
-            href="https://remix.run/tutorials/jokes"
-            rel="noreferrer"
-          >
-            Deep Dive Jokes App Tutorial
-          </a>
-        </li>
-        <li>
-          <a target="_blank" href="https://remix.run/docs" rel="noreferrer">
-            Remix Docs
-          </a>
-        </li>
-      </ul>
-    </div>
+    <>
+      <PrefetchPageLinks page="/resource" />
+      <button type="button" onClick={() => fetcher.load("/resource")}>
+        Load Data
+      </button>
+      {fetcher.data && <DisplayData data={fetcher.data} />}
+    </>
   );
+}
+
+function DisplayData({ data }: { data: { message: string } }) {
+  return <p>{data.message}</p>;
 }
